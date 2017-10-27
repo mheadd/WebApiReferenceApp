@@ -11,30 +11,35 @@ namespace WebApiReferenceApp.Controllers
     [Route("api/[controller]")]
     public class RestController : Controller
     {
-        // Data.gov API endpoint
+        // Data.gov API endpoint.
         private Uri endpoint = new Uri("https://catalog.data.gov");
+        // Path to list packages.
+        private string package_search = "/api/3/action/package_search";
+        // Path to show package details.
+        private string package_details = "/api/3/action/package_show?id={0}";
 
         // GET api/rest
         [HttpGet("search")]
         public ContentResult Get()
         {
-            string response = CallDataDotGov("/api/3/action/package_search");
+            string response = GetPackageData(package_search);
             return Content(response, "application/json");
         }
 
         [HttpGet("details")]
         public ContentResult Get(string id)
         {
-            string response = CallDataDotGov("/api/3/action/package_show?id=" + id);
+            string path = String.Format(package_details, id);
+            string response = GetPackageData(path);
             return Content(response, "application/json");
         }
 
-        private string CallDataDotGov(string path)
+        private string GetPackageData(string path)
         {
             JObject result = JObject.Parse(CallServiceAsync(path).Result);
             return result.GetValue("result").ToString();
         }
-        
+
         private async Task<string> CallServiceAsync(string path)
         {
             HttpClient client = new HttpClient();
