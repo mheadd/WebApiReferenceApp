@@ -14,22 +14,22 @@ namespace WebApiReferenceApp.Controllers
         // Data.gov API endpoint.
         private Uri endpoint = new Uri("https://catalog.data.gov");
         // Path to list packages.
-        private string package_search = "/api/3/action/package_search";
+        private string packageSearch = "/api/3/action/package_search";
         // Path to show package details.
-        private string package_details = "/api/3/action/package_show?id={0}";
+        private string packageDetails = "/api/3/action/package_show?id={0}";
 
         // GET api/rest
         [HttpGet("search")]
         public ContentResult Get()
         {
-            string response = GetPackageData(package_search);
+            string response = GetPackageData(packageSearch);
             return Content(response, "application/json");
         }
 
         [HttpGet("details")]
         public ContentResult Get(string id)
         {
-            string path = String.Format(package_details, id);
+            string path = String.Format(packageDetails, id);
             string response = GetPackageData(path);
             return Content(response, "application/json");
         }

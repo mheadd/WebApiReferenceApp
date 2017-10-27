@@ -12,5 +12,29 @@ This example uses the [REST APIs]()https://www.data.gov/developers/apis in the D
 
 ## Connecting to a RDBMS
 
-Coming soon.
+Set up Docker container with SQL Server:
 
+```bash
+~$ docker pull microsoft/mssql-server-linux:2017-latest
+
+~$ sudo docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=<YourStrong!Passw0rd>' \
+   -p 1401:1433 --name sqlserver \
+   -d microsoft/mssql-server-linux:2017-latest
+```
+
+Connect to the Docker instance and use `sqlcmd` to create a DB and populate it with test data.
+
+```bash
+sudo docker exec -it sqlserver "bash"
+
+/# sqlcmd -S localhost -U SA -P <YourStrong!Passw0rd>
+
+1> CREATE DATABASE TestDB
+2> GO
+1> USE TestDB
+2> CREATE TABLE dbo.people(id INT NOT NULL PRIMARY KEY, name [VARCHAR](64), enabled [VARCHAR](16));
+3> GO
+1> INSERT INTO people([id],[name],[enabled]) VALUES (1,N'Waldo',N'True'), (2,N'Paul',N'True'), (3,N'Devin',N'True'), (4,N'Thor',N'False');
+2> GO
+1> quit
+```
