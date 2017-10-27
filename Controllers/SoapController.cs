@@ -26,7 +26,7 @@ namespace WebApiReferenceApp.Controllers
             XmlDocument doc = new XmlDocument();
 
             // Load the response from the SOAP service.
-            doc.LoadXml(CallNasaAsync().Result);
+            doc.LoadXml(CallServiceAsync().Result);
 
             // Convert the XML document to JSON format.
             return Content(JsonConvert.SerializeObject(doc), "application/json");
@@ -34,7 +34,7 @@ namespace WebApiReferenceApp.Controllers
         /**
          * Private method to call SOAP service.
          */
-        private async Task<string> CallNasaAsync()
+        private async Task<string> CallServiceAsync()
         {
             // Construct the SOAP body
             var body = new XElement(ns.GetName(methodName));
