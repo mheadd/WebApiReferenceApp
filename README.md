@@ -38,3 +38,5 @@ sudo docker exec -it sqlserver "bash"
 2> GO
 1> quit
 ```
+
+This can all be [encapsulated](https://github.com/mheadd/WebApiReferenceApp/issues/1) in a `Docker` file.
