@@ -8,7 +8,7 @@ This example uses the [`SoapHttpClient`](https://www.nuget.org/packages/SoapHttp
 
 ## Connecting to a REST Service
 
-This example uses the [REST APIs]()https://www.data.gov/developers/apis in the Data.gov data portal and makes calls using the native C# [`HttpClient` Class](https://msdn.microsoft.com/en-us/library/system.net.http.httpclient(v=vs.110).aspx). It shows how to retrieve JSON content from the Data.gov APIs and parse it the [`Newtonsoft.Json` package](https://www.nuget.org/packages/Newtonsoft.Json/) to return a fragment of the JSON.
+This example uses the [REST APIs](https://www.data.gov/developers/apis) in the Data.gov data portal and makes calls using the native C# [`HttpClient` Class](https://msdn.microsoft.com/en-us/library/system.net.http.httpclient(v=vs.110).aspx). It shows how to retrieve JSON content from the Data.gov APIs and parse it the [`Newtonsoft.Json` package](https://www.nuget.org/packages/Newtonsoft.Json/) to return a fragment of the JSON.
 
 ## Connecting to a RDBMS
 
