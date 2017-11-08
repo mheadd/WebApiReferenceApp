@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System;
+using WebApiReferenceApp.Models;
 
 namespace WebApiReferenceApp
 {
@@ -27,7 +28,7 @@ namespace WebApiReferenceApp
             var password = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "BaldEagle123";
             var db_name = Environment.GetEnvironmentVariable("DBNAME") ?? "TestDB";
             var connString = $"Server={server},{port};Database={db_name};User ID={user};Password={password};";
-            services.AddDbContext<Models.ApiContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<ApiContext>(options => options.UseSqlServer(connString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
