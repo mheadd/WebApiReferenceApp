@@ -21,7 +21,6 @@ namespace WebApiReferenceApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
             var server = Environment.GetEnvironmentVariable("SERVER") ?? "localhost";
             var port = Environment.GetEnvironmentVariable("PORT") ?? "1401";
             var user = Environment.GetEnvironmentVariable("SQLUSER") ?? "SA";
@@ -29,6 +28,17 @@ namespace WebApiReferenceApp
             var db_name = Environment.GetEnvironmentVariable("DBNAME") ?? "TestDB";
             var connString = $"Server={server},{port};Database={db_name};User ID={user};Password={password};";
             services.AddDbContext<ApiContext>(options => options.UseSqlServer(connString));
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,7 +48,7 @@ namespace WebApiReferenceApp
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors("CorsPolicy");
             app.UseMvc();
         }
     }
