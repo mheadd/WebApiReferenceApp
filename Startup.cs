@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using System;
 using WebApiReferenceApp.Models;
 
@@ -21,14 +20,17 @@ namespace WebApiReferenceApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // SQL Server access credentials.
             var server = Environment.GetEnvironmentVariable("SERVER") ?? "localhost";
             var port = Environment.GetEnvironmentVariable("PORT") ?? "1401";
             var user = Environment.GetEnvironmentVariable("SQLUSER") ?? "SA";
             var password = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "BaldEagle123";
             var db_name = Environment.GetEnvironmentVariable("DBNAME") ?? "TestDB";
+            
             var connString = $"Server={server},{port};Database={db_name};User ID={user};Password={password};";
             services.AddDbContext<ApiContext>(options => options.UseSqlServer(connString));
 
+            // Define CORS policy.
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -48,6 +50,7 @@ namespace WebApiReferenceApp
             {
                 app.UseDeveloperExceptionPage();
             }
+            // Apply CORS policy.
             app.UseCors("CorsPolicy");
             app.UseMvc();
         }
