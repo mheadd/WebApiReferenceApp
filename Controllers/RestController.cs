@@ -12,12 +12,17 @@ namespace WebApiReferenceApp.Controllers
     [Route("api/[controller]")]
     public class RestController : Controller
     {
-        // Data.gov API endpoint.
-        private Uri endpoint = new Uri("https://catalog.data.gov");
-        // Path to list packages.
+        // Path to list Data.gov packages.
         private string packageSearch = "/api/3/action/package_search";
-        // Path to show package details.
+        // Path to show Data.gov package details.
         private string packageDetails = "/api/3/action/package_show?id={0}";
+
+        private IRestConnector _connector;
+
+        public RestController(IRestConnector connector)
+        {
+            _connector = connector;
+        }
 
         // GET api/rest/search
         [HttpGet("search")]
@@ -41,11 +46,9 @@ namespace WebApiReferenceApp.Controllers
          */
         private string GetPackageData(string path)
         {
-            // Instantiate new instance of RestConnector.
-            RestConnector connector = new RestConnector(endpoint);
 
             // Make the API call using the psecificed path.
-            var response = connector.CallServiceAsync(path).Result;
+            var response = _connector.CallServiceAsync(path).Result;
 
             // Parse the raw API response.
             JObject result = JObject.Parse(response);

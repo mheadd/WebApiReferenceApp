@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using System;
 using WebApiReferenceApp.Models;
+using WebApiReferenceApp.Connectors;
 
 namespace WebApiReferenceApp
 {
@@ -29,6 +30,10 @@ namespace WebApiReferenceApp
             
             var connString = $"Server={server},{port};Database={db_name};User ID={user};Password={password};";
             services.AddDbContext<ApiContext>(options => options.UseSqlServer(connString));
+
+            // Dependency Injection for RestController.
+            var rest_endpoint = Environment.GetEnvironmentVariable("REST_URI") ?? "https://catalog.data.gov";
+            services.AddSingleton<IRestConnector>(new RestConnector(new Uri(rest_endpoint)));
 
             // Define CORS policy.
             services.AddCors(options =>
