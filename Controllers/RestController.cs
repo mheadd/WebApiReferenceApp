@@ -18,7 +18,7 @@ namespace WebApiReferenceApp.Controllers
         // Path to show package details.
         private string packageDetails = "/api/3/action/package_show?id={0}";
 
-        // GET api/rest
+        // GET api/rest/search
         [HttpGet("search")]
         public ContentResult Get()
         {
@@ -26,6 +26,7 @@ namespace WebApiReferenceApp.Controllers
             return Content(response, "application/json");
         }
 
+        // GET api/rest/details?id=
         [HttpGet("details")]
         public ContentResult Get(string id)
         {
@@ -42,12 +43,20 @@ namespace WebApiReferenceApp.Controllers
 
         private async Task<string> CallServiceAsync(string path)
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = endpoint;
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            return await client.GetStringAsync(path);
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = endpoint;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                try
+                {
+                    return await client.GetStringAsync(path);
+                }
+                catch (HttpRequestException ex)
+                {
+                    return String.Format(@"{{""result"": {{""error"": ""{0}""}}}}", ex.Message);
+                }
+            }
         }
     }
-
 }
