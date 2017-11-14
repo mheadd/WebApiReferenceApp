@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using WebApiReferenceApp.Models;
 using WebApiReferenceApp.Connectors;
+using System.Xml.Linq;
 
 namespace WebApiReferenceApp
 {
@@ -27,7 +28,7 @@ namespace WebApiReferenceApp
             var user = Environment.GetEnvironmentVariable("SQLUSER") ?? "SA";
             var password = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "BaldEagle123";
             var db_name = Environment.GetEnvironmentVariable("DBNAME") ?? "TestDB";
-            
+
             var connString = $"Server={server},{port};Database={db_name};User ID={user};Password={password};";
             services.AddDbContext<ApiContext>(options => options.UseSqlServer(connString));
 
@@ -35,15 +36,20 @@ namespace WebApiReferenceApp
             var rest_endpoint = Environment.GetEnvironmentVariable("REST_URI") ?? "https://catalog.data.gov";
             services.AddSingleton<IRestConnector>(new RestConnector(new Uri(rest_endpoint)));
 
+            // Dependency Injection for SoapController.
+            var ns = Environment.GetEnvironmentVariable("SOAP_NAMESPACE") ?? "http://helio.spdf.gsfc.nasa.gov/";
+            var soap_endpoint = Environment.GetEnvironmentVariable("SOAP_ENDPOINT") ?? "http://sscweb.gsfc.nasa.gov:80/WS/helio/1/HeliocentricTrajectoriesService";
+            services.AddSingleton<ISoapConnector>(new SoapConnector(XNamespace.Get(ns), new Uri(soap_endpoint)));
+
             // Define CORS policy.
             services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
+                {
+                    options.AddPolicy("CorsPolicy",
+                        builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+                });
 
             services.AddMvc();
         }

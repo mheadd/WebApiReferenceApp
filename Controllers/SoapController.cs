@@ -3,20 +3,20 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
-using SoapHttpClient;
-using SoapHttpClient.Extensions;
-using SoapHttpClient.Enums;
 using Newtonsoft.Json;
+using WebApiReferenceApp.Connectors;
 
 namespace WebApiReferenceApp.Controllers
 {
     [Route("api/[controller]")]
     public class SoapController : Controller
     {
-        // Details of NASA's NASA's Heliocentric Trajectories SOAP Service
-        private XNamespace ns = XNamespace.Get("http://helio.spdf.gsfc.nasa.gov/");
-        private Uri endpoint = new Uri("http://sscweb.gsfc.nasa.gov:80/WS/helio/1/HeliocentricTrajectoriesService");
+        private ISoapConnector _connector;
         private string methodName = "getAllObjects";
+        public SoapController(ISoapConnector connector)
+        {
+            _connector = connector;
+        }
 
         // GET api/soap
         [HttpGet]
@@ -26,30 +26,16 @@ namespace WebApiReferenceApp.Controllers
             XmlDocument doc = new XmlDocument();
 
             // Load the response from the SOAP service.
-            doc.LoadXml(CallServiceAsync().Result);
+            doc.LoadXml(GetSoapResponse());
 
             // Convert the XML document to JSON format.
             return Content(JsonConvert.SerializeObject(doc), "application/json");
         }
-        /**
-         * Private method to call SOAP service.
-         */
-        private async Task<string> CallServiceAsync()
+
+        private string GetSoapResponse()
         {
-            // Construct the SOAP body
-            var body = new XElement(ns.GetName(methodName));
-
-            // Make the call to the SOAP service.
-            using (var soapClient = new SoapClient())
-            {
-                var response =
-                  await soapClient.PostAsync(
-                          endpoint: endpoint,
-                          soapVersion: SoapVersion.Soap11,
-                          body: body);
-
-                return await response.Content.ReadAsStringAsync();
-            }
+            var response = _connector.CallServiceAsync(methodName);
+            return response.Result;
         }
     }
 }

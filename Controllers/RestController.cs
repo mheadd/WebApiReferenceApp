@@ -46,7 +46,6 @@ namespace WebApiReferenceApp.Controllers
          */
         private string GetPackageData(string path)
         {
-
             // Make the API call using the psecificed path.
             var response = _connector.CallServiceAsync(path).Result;
 
