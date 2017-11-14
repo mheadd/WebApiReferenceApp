@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using WebApiReferenceApp.Connectors;
 
 namespace WebApiReferenceApp.Controllers
 {
@@ -35,28 +36,22 @@ namespace WebApiReferenceApp.Controllers
             return Content(response, "application/json");
         }
 
+        /**
+         * Private method to invoke RestConnector and make API call.       
+         */
         private string GetPackageData(string path)
         {
-            JObject result = JObject.Parse(CallServiceAsync(path).Result);
-            return result.GetValue("result").ToString();
-        }
+            // Instantiate new instance of RestConnector.
+            RestConnector connector = new RestConnector(endpoint);
 
-        private async Task<string> CallServiceAsync(string path)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = endpoint;
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                try
-                {
-                    return await client.GetStringAsync(path);
-                }
-                catch (HttpRequestException ex)
-                {
-                    return String.Format(@"{{""result"": {{""error"": ""{0}""}}}}", ex.Message);
-                }
-            }
+            // Make the API call using the psecificed path.
+            var response = connector.CallServiceAsync(path).Result;
+
+            // Parse the raw API response.
+            JObject result = JObject.Parse(response);
+
+            // Return the result.
+            return result.GetValue("result").ToString();
         }
     }
 }
